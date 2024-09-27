@@ -1,0 +1,41 @@
+header {
+    position: sticky;
+    top: 0;
+    left: 0;
+    background-color: white;
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    z-index: 1;
+  }
+  
+  header h1 {
+    margin: 0;
+    font-size: xx-large;
+    font-weight: bold;
+    color: rgb(50, 149, 182);
+  }
+  
+  .nav {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    justify-content: flex-start;
+    width: auto;
+    margin-left: 20%;
+  }
+  
+  .nav > li {
+    position: relative;
+    flex: 1;
+    margin: 0 50px;
+  }
+  
+  .nav .sub-menu {
+    display: none;
+    position: absolute;
+    list-style-type: none;
+    padding: 0;
+    left: 0;
+  }
