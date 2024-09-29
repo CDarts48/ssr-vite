@@ -1,0 +1,43 @@
+.contact {
+    padding: 2em;
+    background-color: #f9f9f9;
+    text-align: center;
+}
+
+.contact p {
+    font-size: 1.2em;
+    color: #535bf2;
+}
+
+.vertical-form {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+}
+
+.contact-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto;
+    align-items: start;
+}
+
+.contact-header {
+    grid-column: 1 / span 2;
+    text-align: center;
+}
+
+.contact-form {
+  grid-column: 1;
+}
+
+.contact-info {
+  grid-column: 2;
+  text-align: center;
+}
+
+.contact-form-content {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+}

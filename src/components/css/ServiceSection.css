@@ -3,6 +3,12 @@
     grid-template-columns: repeat(4, 1fr);
     gap: 10px;
   }
+
+  .service > h2 {
+    text-align: center; /* Centers the text */
+    font-size: 3em; /* Adjust this value as needed */
+    color: rgb(80, 125, 229);
+  }
   
   .grid img {
     width: 100%;

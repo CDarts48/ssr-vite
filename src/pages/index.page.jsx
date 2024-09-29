@@ -5,6 +5,10 @@ import Header from '../components/Header';
 import { escapeInject, dangerouslySkipEscape } from 'vite-plugin-ssr/server';
 import { ServerStyleSheet } from 'styled-components';
 import ServiceSection from '../components/ServiceSection';
+import HeroSection from '../components/Hero';
+import Reviews from '../components/Reviews';
+import ContactSection from '../components/ContactSection';
+import Footer from '../components/Footer';
 
 async function render(pageContext) {
   const sheet = new ServerStyleSheet(); // Create a new ServerStyleSheet
@@ -14,8 +18,11 @@ async function render(pageContext) {
     sheet.collectStyles( // Collect styles for SSR
       <StaticRouter location={url}>
         <Header />
+        <HeroSection />
         <ServiceSection />
-        <h1>Hello, world!</h1>
+        <Reviews />
+        <ContactSection />
+        <Footer />
       </StaticRouter>
     )
   );
