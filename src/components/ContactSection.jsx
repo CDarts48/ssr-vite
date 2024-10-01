@@ -10,27 +10,23 @@ const ContactSection = () => {
       <div className="contact-form">
         <form className="contact-form-content">
           <h3>How Can I Help?</h3>
-          <label>
-            Name
-            <input type="text" name="name" required />
+          <label className="form-field">
+            <input type="text" name="name" placeholder="Name" required />
           </label>
-          <label>
-            Email*
-            <input type="email" name="email" required />
+          <label className="form-field">
+            <input type="email" name="email" placeholder="Email*" required />
           </label>
-          <label>
-            Phone
-            <input type="tel" name="phone" />
+          <label className="form-field"> 
+            <input type="tel" name="phone" placeholder="Phone" />
           </label>
-          <label>
-            Address (Street, City, Zip Code)
-            <input type="text" name="address" />
+          <label className="form-field">
+            <input type="text" name="address" placeholder="Address (Street, City, Zip Code)" />
           </label>
-          <label>
+          <label className="form-field">
             Let me know the details of what you are looking for, and we'll contact you with a quote.
             <textarea name="details"></textarea>
           </label>
-          <label>
+          <label className="form-field">
             Attach Files
             <input type="file" name="file" />
           </label>
