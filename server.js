@@ -1,6 +1,6 @@
 import express from 'express';
 import rateLimit from 'express-rate-limit';
-import { createRender } from 'vite-plugin-ssr';
+import { renderPage } from 'vite-plugin-ssr/server';
 import nodemailer from 'nodemailer';
 import multer from 'multer';
 import fs from 'fs';
@@ -9,7 +9,6 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const app = express();
-const renderPage = createRender({ isProduction: process.env.NODE_ENV === 'production', root: `${process.cwd()}/` });
 
 // Enable rate limiting
 const limiter = rateLimit({
@@ -43,6 +42,8 @@ const upload = multer({
 app.post('/send-email', upload.array('files'), async (req, res) => {
   const { name, email, phone, address, details } = req.body;
 
+  console.log('Form submission received:', { name, email, phone, address, details });
+
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -64,25 +65,32 @@ app.post('/send-email', upload.array('files'), async (req, res) => {
 
   try {
     await transporter.sendMail(mailOptions);
+    console.log('Email sent successfully');
     // Delete the uploaded files from the server after the email is sent
     req.files.forEach(file => fs.unlinkSync(file.path));
     res.status(200).send('Email sent successfully');
   } catch (error) {
-    console.error(error);
+    console.error('Error sending email:', error);
     res.status(500).send('Error sending email');
   }
 });
 
-app.get('*', (req, res) => {
+app.get('*', async (req, res) => {
   let url = req.url;
   // Map the '/' route to the '/home' page
   if (url === '/') {
     url = '/home';
   }
-  renderPage(url).then(pageContext => {
-    const {html} = pageContext;
+  try {
+    const pageContext = await renderPage({ url });
+    const { html } = pageContext;
     res.end(html);
-  });
+  } catch (error) {
+    console.error('Error rendering page:', error);
+    res.status(500).send('Error rendering page');
+  }
 });
 
-app.listen(3000);
+app.listen(3000, () => {
+  console.log('Server is running on http://localhost:3000');
+});
