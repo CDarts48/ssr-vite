@@ -1,8 +1,8 @@
 import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom/server';
+import ejs from 'ejs';
 import Header from '../components/Header';
-import { escapeInject, dangerouslySkipEscape } from 'vite-plugin-ssr/server';
 import { ServerStyleSheet, createGlobalStyle } from 'styled-components'; // Added createGlobalStyle
 import ServiceSection from '../components/ServiceSection';
 import HeroSection from '../components/Hero';
@@ -37,18 +37,23 @@ async function render(pageContext) {
 
   const css = sheet.getStyleTags(); // Extract the CSS
 
-  const documentHtml = escapeInject`<!DOCTYPE html>
-    <html>
-      <head>
-        <title>TophersManDr</title>
-        ${dangerouslySkipEscape(css)} <!-- Include the CSS in the HTML -->
-      </head>
-      <body>
-        <div id="app">${dangerouslySkipEscape(html)}</div>
-        <script type="module" src="/client-entry.js"></script> <!-- Your client entry script -->
-      </body>
-    </html>`;
+  const ejs = require('ejs');
 
+  const template = `
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <title>TophersManDr</title>
+      <style><%- css %></style>
+    </head>
+    <body>
+      <div id="app"><%- html %></div>
+      <script type="module" src="/client-entry.js"></script>
+    </body</html>
+  `;
+  
+  const documentHtml = ejs.render(template, { css, html });
+  
   return { documentHtml, pageContext: { /* add specific properties here if needed */ } };
 }
 

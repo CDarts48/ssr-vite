@@ -1,28 +1,52 @@
 import React, { useState } from 'react';
-import './css/ContactSection.css'
-import { sendEmail } from "/Users/corey/Desktop/ssr-vite/utils/ContactSection.jsx";
+
+export async function sendEmail(formData) {
+  try {
+    const response = await fetch('/send-email', {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error('Error sending email');
+    }
+
+    console.log('Email sent successfully');
+  } catch (error) {
+    console.error(error);
+  }
+}
 
 const ContactSection = () => {
-  const [honeypot, setHoneypot] = useState("");
+  const [honeypot, setHoneypot] = useState('');
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-  
+
     if (honeypot) {
       // This is likely a bot submission because the honeypot field has a value
       return;
     }
-  
+
     // Get form data
     const formData = new FormData(event.target);
-  
+
     try {
-      // Send email
-      await sendEmail(formData);
+      // Send POST request to server-side endpoint
+      const response = await fetch('/send-email', {
+        method: 'POST',
+        body: formData, // Send the form data directly
+      });
+
+      if (!response.ok) {
+        throw new Error('Error sending email');
+      }
+
+      // The email was sent successfully
       console.log('Email sent successfully');
     } catch (error) {
       // There was an error sending the email
-      console.error('Error sending email', error);
+      console.error(error);
     }
   };
 
@@ -52,8 +76,8 @@ const ContactSection = () => {
           </label>
           <label className="form-field">
             Attach Files
-                      <input type="file" name="files" multiple />.
-                  </label>
+            <input type="file" name="files" multiple />.
+          </label>
 
           {/* Honeypot field */}
           <div style={{ display: "none" }}>
@@ -65,14 +89,8 @@ const ContactSection = () => {
           <button type="submit">Send</button>
         </form>
       </div>
-      <div className="contact-info">
-        <h2>Looking Forward to Hearing From You!</h2>
-        <p>Topher's Maintenance and Repair</p>
-        <p>Westminister, Colorado, United States</p>
-        <p>Chris@tophersmandr.com</p>
-      </div>
     </section>
   );
-}
+};
 
 export default ContactSection;
