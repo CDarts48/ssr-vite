@@ -1,16 +1,15 @@
 import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom/server';
-import ejs from 'ejs';
+import { ServerStyleSheet, createGlobalStyle } from 'styled-components';
 import Header from '../components/Header';
-import { ServerStyleSheet, createGlobalStyle } from 'styled-components'; // Added createGlobalStyle
 import ServiceSection from '../components/ServiceSection';
 import HeroSection from '../components/Hero';
 import Reviews from '../components/Reviews';
 import ContactSection from '../components/ContactSection';
 import Footer from '../components/Footer';
+import { escapeInject, dangerouslySkipEscape } from 'vite-plugin-ssr/server';
 
-// Added GlobalStyle component
 const GlobalStyle = createGlobalStyle`
   body {
     background-color: rgb(246, 246, 246);
@@ -18,13 +17,12 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 async function render(pageContext) {
-  const sheet = new ServerStyleSheet(); // Create a new ServerStyleSheet
-
-  const url = pageContext.urlPathname; // Get the URL from the pageContext
+  const sheet = new ServerStyleSheet();
+  const url = pageContext.urlPathname;
   const html = renderToString(
-    sheet.collectStyles( // Collect styles for SSR
+    sheet.collectStyles(
       <StaticRouter location={url}>
-        <GlobalStyle /> {/* Added GlobalStyle */}
+        <GlobalStyle />
         <Header />
         <HeroSection />
         <ServiceSection />
@@ -35,25 +33,19 @@ async function render(pageContext) {
     )
   );
 
-  const css = sheet.getStyleTags(); // Extract the CSS
-
-  const ejs = require('ejs');
-
-  const template = `
-  <!DOCTYPE html>
+  const css = sheet.getStyleTags();
+  const documentHtml = escapeInject`<!DOCTYPE html>
   <html>
     <head>
       <title>TophersManDr</title>
-      <style><%- css %></style>
+      <style>${dangerouslySkipEscape(css)}</style>
     </head>
     <body>
-      <div id="app"><%- html %></div>
+      <div id="app">${dangerouslySkipEscape(html)}</div>
       <script type="module" src="/client-entry.js"></script>
-    </body</html>
-  `;
-  
-  const documentHtml = ejs.render(template, { css, html });
-  
+    </body>
+  </html>`;
+
   return { documentHtml, pageContext: { /* add specific properties here if needed */ } };
 }
 
