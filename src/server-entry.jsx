@@ -1,18 +1,40 @@
-import { createPageRender } from 'vite-plugin-ssr';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
-import App from './App';
+import { StaticRouter } from 'react-router-dom/server';
+import { ServerStyleSheet, createGlobalStyle } from 'styled-components';
+import App from '../components/App';
+import { escapeInject, dangerouslySkipEscape } from 'vite-plugin-ssr/server';
 
-const renderPage = createPageRender({ isProduction: process.env.NODE_ENV === 'production' });
+const GlobalStyle = createGlobalStyle`
+  body {
+    background-color: rgb(246, 246, 246);
+  }
+`;
 
-export async function render(url, manifest) {
-  const pageContextInit = { url };
-  const pageContext = await renderPage(pageContextInit);
-  const { html } = pageContext;
+export async function render(pageContext) {
+  const { url } = pageContext;
+  const sheet = new ServerStyleSheet();
+  const appHtml = renderToString(
+    sheet.collectStyles(
+      <StaticRouter location={url}>
+        <GlobalStyle />
+        <App />
+      </StaticRouter>
+    )
+  );
+  const css = sheet.getStyleTags();
 
-  const appHtml = renderToString(<App />);
+  const documentHtml = escapeInject`<!DOCTYPE html>
+  <html>
+    <head>
+      <title>TophersManDr</title>
+      <style>${dangerouslySkipEscape(css)}</style>
+    </head>
+    <body>
+      <div id="app">${dangerouslySkipEscape(appHtml)}</div>
+      <script type="module" src="/client-entry.js"></script>
+    </body>
+  </html>`;
 
-  const finalHtml = html.replace('<!--app-html-->', appHtml);
-
-  return finalHtml;
+  return { documentHtml, pageContext: { /* add specific properties here if needed */ } };
 }

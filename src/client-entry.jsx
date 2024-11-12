@@ -1,14 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
-import App from './components/App';
+import App from '../components/App';
 
-// Create a root
-const root = ReactDOM.createRoot(document.getElementById('app'));
+// Export the render function for vite-plugin-ssr
+export function render(pageContext) {
+  const root = document.getElementById('app');
 
-// Render the app
-root.render(
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>
-)
+  ReactDOM.hydrate(
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>,
+    root
+  );
+}
+
+// Enable client-side routing
+export const clientRouting = true;
