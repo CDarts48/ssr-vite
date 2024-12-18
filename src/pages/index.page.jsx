@@ -8,7 +8,7 @@ import HeroSection from '../components/Hero';
 import Reviews from '../components/Reviews';
 import ContactSection from '../components/ContactSection';
 import Footer from '../components/Footer';
-import { escapeInject, dangerouslySkipEscape } from 'vite-plugin-ssr/server';
+import { escapeInject, dangerouslySkipEscape } from 'vike/server';
 
 const GlobalStyle = createGlobalStyle`
   body {

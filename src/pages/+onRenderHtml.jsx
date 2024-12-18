@@ -3,7 +3,7 @@ import { renderToString } from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom/server';
 import { ServerStyleSheet, createGlobalStyle } from 'styled-components';
 import App from '../components/App';
-import { escapeInject, dangerouslySkipEscape } from 'vite-plugin-ssr/server';
+import { escapeInject, dangerouslySkipEscape } from 'vike/server';
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -11,7 +11,7 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
-export async function render(pageContext) {
+export async function onRenderHtml(pageContext) {
   const { url } = pageContext;
   const sheet = new ServerStyleSheet();
   const appHtml = renderToString(
@@ -37,4 +37,4 @@ export async function render(pageContext) {
   </html>`;
 
   return { documentHtml, pageContext: { /* add specific properties here if needed */ } };
-}
+}e

@@ -1,7 +1,6 @@
 import express from 'express';
 import rateLimit from 'express-rate-limit';
-import { renderPage } from 'vite-plugin-ssr/server';
-import nodemailer from 'nodemailer';
+import { renderPage } from 'vike/server';
 import multer from 'multer';
 import fs from 'fs';
 import dotenv from 'dotenv';
@@ -39,52 +38,17 @@ const upload = multer({
   }
 });
 
-app.post('/send-email', upload.array('files'), async (req, res) => {
-  const { name, email, phone, address, details } = req.body;
-
-  console.log('Form submission received:', { name, email, phone, address, details });
-
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: process.env.GMAIL_USER,
-      pass: process.env.GMAIL_PASS,
-    },
-  });
-
-  const mailOptions = {
-    from: process.env.GMAIL_USER,
-    to: process.env.GMAIL_USER,
-    subject: 'New contact form submission',
-    text: `Name: ${name}\nEmail: ${email}\nPhone: ${phone}\nAddress: ${address}\nDetails: ${details}`,
-    attachments: req.files.map(file => ({
-      filename: file.originalname,
-      path: file.path,
-    })),
-  };
-
-  try {
-    await transporter.sendMail(mailOptions);
-    console.log('Email sent successfully');
-    // Delete the uploaded files from the server after the email is sent
-    req.files.forEach(file => fs.unlinkSync(file.path));
-    res.status(200).send('Email sent successfully');
-  } catch (error) {
-    console.error('Error sending email:', error);
-    res.status(500).send('Error sending email');
-  }
+app.post('/upload-files', upload.array('files'), (req, res) => {
+  res.status(200).send('Files uploaded successfully');
 });
 
 app.get('*', async (req, res) => {
-  let url = req.url;
-  // Map the '/' route to the '/home' page
-  if (url === '/') {
-    url = '/home';
-  }
+  const pageContextInit = { urlOriginal: req.originalUrl };
   try {
-    const pageContext = await renderPage({ url });
-    const { html } = pageContext;
-    res.end(html);
+    const pageContext = await renderPage(pageContextInit);
+    const { httpResponse } = pageContext;
+    if (!httpResponse) return res.status(200).send('404 Page Not Found');
+    res.status(httpResponse.statusCode).send(httpResponse.body);
   } catch (error) {
     console.error('Error rendering page:', error);
     res.status(500).send('Error rendering page');
