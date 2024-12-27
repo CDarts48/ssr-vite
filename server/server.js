@@ -4,7 +4,6 @@ import { renderPage } from 'vike/server';
 import multer from 'multer';
 import fs from 'fs';
 import dotenv from 'dotenv';
-
 dotenv.config();
 
 const app = express();
@@ -20,7 +19,6 @@ app.use(limiter);
 
 // Serve static files from the 'public' directory
 app.use(express.static('public'));
-
 app.use(express.json());
 
 // Set up multer to store uploaded files in the 'uploads' directory

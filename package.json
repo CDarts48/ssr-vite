@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "concurrently \"vite\" \"node server/server.js\"",
     "build": "vite build && vite build --ssr src/entry-server.jsx",
-    "serve": "node server/server.js",
+    "start": "NODE_ENV=production node server/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
